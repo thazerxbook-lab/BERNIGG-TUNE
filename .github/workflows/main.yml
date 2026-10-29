@@ -1,0 +1,32 @@
+
+name: Build BERNIGG TUNE VST3
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Download source code
+        uses: actions/checkout@v4
+
+      - name: Configure project
+        run: cmake -S . -B build -A x64
+
+      - name: Compile VST3
+        run: cmake --build build --config Release --target BERNIGG_TUNE_VST3 --parallel 2
+
+      - name: Upload VST3 plugin
+        uses: actions/upload-artifact@v4
+        with:
+          name: BERNIGG-TUNE-VST3-Windows
+          path: build/BERNIGG_TUNE_artefacts/Release/VST3/**
+          if-no-files-found: error
